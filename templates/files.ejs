@@ -1,0 +1,10 @@
+<%- include('base', { title: 'File Explorer' }) %>
+<div class="card">
+    <h2 class="text-2xl glow mb-4">File Explorer</h2>
+    <p>Current Path: <%= path %></p>
+    <ul>
+        <% files.forEach(file => { %>
+            <li><a href="/files?path=<%= path %>/<%= file.name %>" class="hover:text-green-400"><%= file.name %> <%= file.isDir ? '(Dir)' : '' %></a></li>
+        <% }) %>
+    </ul>
+</div>
