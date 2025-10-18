@@ -1,0 +1,10 @@
+<%- include('base', { title: 'Network' }) %>
+<div class="card">
+    <h2 class="text-2xl glow mb-4">Network Monitoring</h2>
+    <table class="w-full">
+        <tr><th>Local</th><th>Remote</th><th>Status</th></tr>
+        <% netInfo.forEach(conn => { %>
+            <tr><td><%= conn.local %></td><td><%= conn.remote %></td><td><%= conn.status %></td></tr>
+        <% }) %>
+    </table>
+</div>
