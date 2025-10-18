@@ -1,0 +1,22 @@
+<%- include('base', { title: 'Packages' }) %>
+<div class="card">
+    <h2 class="text-2xl glow mb-4">Package Management</h2>
+    <input id="packageInput" type="text" placeholder="Package name" class="bg-gray-800 p-2 rounded w-full mb-2 text-white">
+    <button onclick="managePackage('install')" class="btn bg-green-500 hover:bg-green-600 p-2 rounded">Install</button>
+    <button onclick="managePackage('remove')" class="btn bg-red-500 hover:bg-red-600 p-2 rounded">Remove</button>
+    <h3 class="mt-4">Installed Packages</h3>
+    <ul>
+        <% packages.forEach(pkg => { %>
+            <li><%= pkg %></li>
+        <% }) %>
+    </ul>
+</div>
+<script>
+    async function managePackage(action) {
+        const pkg = document.getElementById('packageInput').value;
+        const res = await fetch('/packages', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: `package_name=${pkg}&action=${action}` });
+        const result = await res.json();
+        alert(result.message);
+        if (result.status === 'success') location.reload();
+    }
+</script>
