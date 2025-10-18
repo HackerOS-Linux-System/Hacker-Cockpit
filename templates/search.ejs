@@ -1,0 +1,19 @@
+<%- include('base', { title: 'Web Search' }) %>
+<div class="card">
+    <h2 class="text-2xl glow mb-4">Web Search</h2>
+    <input id="query" type="text" placeholder="Query" class="bg-gray-800 p-2 rounded w-full mb-2 text-white">
+    <button onclick="searchWeb()" class="btn bg-green-500 hover:bg-green-600 p-2 rounded">Search</button>
+    <div id="searchResults" class="mt-4"></div>
+</div>
+<script>
+    async function searchWeb() {
+        const query = document.getElementById('query').value;
+        const res = await fetch('/search', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: `query=${query}` });
+        const result = await res.json();
+        const div = document.getElementById('searchResults');
+        div.innerHTML = '';
+        result.results.forEach(r => {
+            div.innerHTML += `<div class="mb-2"><a href="${r.link}" class="text-blue-400 hover:underline">${r.title}</a><p>${r.snippet}</p></div>`;
+        });
+    }
+</script>
