@@ -1,0 +1,9 @@
+<%- include('base', { title: 'Logs' }) %>
+<div class="card">
+    <h2 class="text-2xl glow mb-4">System Logs</h2>
+    <pre class="text-sm overflow-auto h-96 bg-black p-2 rounded">
+<% logs.forEach(log => { %>
+<%= log %>
+<% }) %>
+    </pre>
+</div>
