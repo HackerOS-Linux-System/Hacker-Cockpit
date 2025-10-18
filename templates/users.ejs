@@ -1,0 +1,35 @@
+<%- include('base', { title: 'Users' }) %>
+<div class="card">
+    <h2 class="text-2xl glow mb-4">User Management</h2>
+    <h3>Users</h3>
+    <table class="w-full mb-4">
+        <tr><th>Username</th><th>UID</th><th>Home</th></tr>
+        <% users.forEach(user => { %>
+            <tr><td><%= user.username %></td><td><%= user.uid %></td><td><%= user.home %></td></tr>
+        <% }) %>
+    </table>
+    <h3>Groups</h3>
+    <table class="w-full">
+        <tr><th>Groupname</th><th>GID</th></tr>
+        <% groups.forEach(group => { %>
+            <tr><td><%= group.groupname %></td><td><%= group.gid %></td></tr>
+        <% }) %>
+    </table>
+    <!-- New user management -->
+    <h3 class="mt-4">Manage Users</h3>
+    <input id="username" type="text" placeholder="Username" class="bg-gray-800 p-2 rounded mb-2 text-white">
+    <input id="password" type="password" placeholder="Password (for add)" class="bg-gray-800 p-2 rounded mb-2 text-white">
+    <button onclick="manageUser('add')" class="btn bg-blue-500 hover:bg-blue-600 p-2 rounded">Add User</button>
+    <button onclick="manageUser('delete')" class="btn bg-red-500 hover:bg-red-600 p-2 rounded">Delete User</button>
+</div>
+<script>
+    async function manageUser(action) {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const body = action === 'add' ? `action=add&username=${username}&password=${password}` : `action=delete&username=${username}`;
+        const res = await fetch('/manage-users', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
+        const result = await res.json();
+        alert(result.message);
+        if (result.status === 'success') location.reload();
+    }
+</script>
