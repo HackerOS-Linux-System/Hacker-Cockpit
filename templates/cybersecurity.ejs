@@ -1,0 +1,10 @@
+<%- include('base', { title: 'Cybersecurity News' }) %>
+<div class="card cyber">
+    <h2 class="text-2xl glow mb-4">Cybersecurity News</h2>
+    <% news.forEach(article => { %>
+        <div class="mb-4">
+            <a href="<%= article.link %>" class="text-blue-300 hover:underline text-lg"><%= article.title %></a>
+            <p><%= article.summary %></p>
+        </div>
+    <% }) %>
+</div>
