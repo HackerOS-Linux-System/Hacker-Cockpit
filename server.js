@@ -1,34 +1,34 @@
 const express = require('express');
 const path = require('path');
 const os = require('os');
+const fs = require('fs').promises; // Use promises for async file operations
 const child_process = require('child_process');
 const util = require('util');
 const exec = util.promisify(child_process.exec);
-const si = require('systeminformation'); // For system info (npm install systeminformation)
-const request = require('request'); // For web requests (npm install request)
-const cheerio = require('cheerio'); // For scraping (npm install cheerio)
-const Parser = require('rss-parser'); // For RSS feeds (npm install rss-parser)
-const socket = require('socket.io'); // For real-time updates (npm install socket.io)
-const re = require('re'); // Simple regex, but use built-in RegExp
-const cache = require('memory-cache'); // Simple cache (npm install memory-cache)
-const dotenv = require('dotenv'); // For .env (npm install dotenv)
+const si = require('systeminformation');
+const request = require('request');
+const cheerio = require('cheerio');
+const Parser = require('rss-parser');
+const socket = require('socket.io');
+const cache = require('memory-cache');
+const dotenv = require('dotenv');
 
 dotenv.config();
 
 const app = express();
 const server = require('http').createServer(app);
-const io = socket(server); // For real-time
+const io = socket(server);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'templates'));
-app.use(express.static(path.join(__dirname, 'public'))); // For static files like logo
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Cache for news
 const newsCache = new cache.Cache();
 
-// Validate inputs
+// Validate inputs using native RegExp
 function validateInput(text, maxLength = 100, allowedChars = /^[a-zA-Z0-9\.\-]+$/ ) {
     return allowedChars.test(text) && text.length <= maxLength;
 }
@@ -199,7 +199,6 @@ async function runDiagnostic() {
     }
 }
 
-// New functions added
 async function getFirewallStatus() {
     try {
         const { stdout } = await exec('sudo ufw status');
@@ -279,15 +278,15 @@ app.get('/logs', async (req, res) => {
     }
 });
 
-app.get('/files', (req, res) => {
+app.get('/files', async (req, res) => {
     let dirPath = req.query.path || '/';
     if (!path.isAbsolute(dirPath)) dirPath = '/';
     try {
-        const files = fs.readdirSync(dirPath).map(f => ({
+        const files = (await fs.readdir(dirPath)).map(async (f) => ({
             name: f,
-            isDir: fs.statSync(path.join(dirPath, f)).isDirectory()
+            isDir: (await fs.stat(path.join(dirPath, f))).isDirectory()
         }));
-        res.render('files', { path: dirPath, files });
+        res.render('files', { path: dirPath, files: await Promise.all(files) });
     } catch (e) {
         console.error(`File explorer error: ${e}`);
         res.render('files', { path: dirPath, files: [] });
@@ -374,16 +373,16 @@ app.route('/terminal')
         }
     });
 
-app.get('/logo', (req, res) => {
+app.get('/logo', async (req, res) => {
     const logoPath = '/usr/share/HackerOS/ICONS/HackerOS.png';
-    if (fs.existsSync(logoPath)) {
+    try {
+        await fs.access(logoPath);
         res.sendFile(logoPath);
-    } else {
+    } catch {
         res.status(404).send('');
     }
 });
 
-// New routes
 app.get('/firewall', async (req, res) => {
     const status = await getFirewallStatus();
     res.render('firewall', { status });
