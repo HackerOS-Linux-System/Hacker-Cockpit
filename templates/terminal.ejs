@@ -1,0 +1,15 @@
+<%- include('base', { title: 'Terminal' }) %>
+<div class="card">
+    <h2 class="text-2xl glow mb-4">Web Terminal</h2>
+    <input id="command" type="text" placeholder="Command" class="bg-gray-800 p-2 rounded w-full mb-2 text-white">
+    <button onclick="runCommand()" class="btn bg-green-500 hover:bg-green-600 p-2 rounded">Run</button>
+    <pre id="terminalOutput" class="text-sm overflow-auto h-96 bg-black p-2 rounded mt-4"></pre>
+</div>
+<script>
+    async function runCommand() {
+        const command = document.getElementById('command').value;
+        const res = await fetch('/terminal', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: `command=${command}` });
+        const result = await res.json();
+        document.getElementById('terminalOutput').textContent = result.output || result.message;
+    }
+</script>
