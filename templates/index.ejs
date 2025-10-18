@@ -1,0 +1,26 @@
+<%- include('base', { title: 'Dashboard' }) %>
+<div class="card">
+    <h2 class="text-2xl glow mb-4">System Dashboard</h2>
+    <p>CPU Usage: <span id="cpuUsage"><%= systemInfo.cpuUsage %></span>%</p>
+    <p>CPU Freq: <%= systemInfo.cpuFreq %> GHz</p>
+    <p>Memory: <%= systemInfo.memoryUsed.toFixed(2) %> / <%= systemInfo.memoryTotal.toFixed(2) %> GB</p>
+    <p>Disk: <%= systemInfo.diskUsed.toFixed(2) %> / <%= systemInfo.diskTotal.toFixed(2) %> GB</p>
+    <p>Net Sent: <%= systemInfo.netSent.toFixed(2) %> MB</p>
+    <p>Net Recv: <%= systemInfo.netRecv.toFixed(2) %> MB</p>
+    <p>Uptime: <span id="uptime"><%= systemInfo.uptime %></span></p>
+    <h3>Top Processes</h3>
+    <table class="w-full">
+        <tr><th>PID</th><th>Name</th><th>CPU</th><th>Memory</th></tr>
+        <% systemInfo.processes.forEach(proc => { %>
+            <tr><td><%= proc.pid %></td><td><%= proc.name %></td><td><%= proc.cpu %></td><td><%= proc.memory %></td></tr>
+        <% }) %>
+    </table>
+</div>
+<script>
+    const socket = io();
+    socket.on('systemUpdate', (info) => {
+        document.getElementById('cpuUsage').textContent = info.cpuUsage;
+        document.getElementById('uptime').textContent = info.uptime;
+        // Update other fields as needed
+    });
+</script>
