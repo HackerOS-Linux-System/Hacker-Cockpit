@@ -1,0 +1,9 @@
+<%- include('base', { title: 'Diagnostics' }) %>
+<div class="card">
+    <h2 class="text-2xl glow mb-4">System Diagnostics</h2>
+    <ul>
+        <li>Disk Space: <%= checks.diskSpace ? 'OK' : 'Warning' %></li>
+        <li>Memory Usage: <%= checks.memoryUsage ? 'OK' : 'Warning' %></li>
+        <li>CPU Usage: <%= checks.cpuUsage ? 'OK' : 'Warning' %></li>
+    </ul>
+</div>
